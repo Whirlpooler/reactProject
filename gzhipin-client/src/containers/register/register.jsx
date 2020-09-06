@@ -8,10 +8,13 @@ import {
 	WhiteSpace,
 	Radio,
 	Button,
+	Toast
 } from 'antd-mobile'
+import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import { register } from '../../redux/actions'
 import Logo from '../../components/logo/logo'
-export default class Register extends Component {
+class Register extends Component {
 	state = {
 		username: '', //用户名
 		password: '', //密码
@@ -20,7 +23,7 @@ export default class Register extends Component {
 	}
 	register = () => {
 		// console.log(this.state)
-		this.props.register()
+		this.props.register(this.state)
 	}
 	handleChange = (name, val) => {
 		this.setState({
@@ -30,8 +33,19 @@ export default class Register extends Component {
 	toLogin = () => {
 		this.props.history.replace('/login')
 	}
+	componentDidUpdate() {
+
+	}
 	render() {
 		const { type } = this.state
+		const { msg, redirectTo } = this.props.user
+		if (msg) {
+			Toast.fail(msg, 3)
+		}
+		if (redirectTo) {
+			return <Redirect to={redirectTo}></Redirect>
+		}
+
 		return (
 			<div>
 				<NavBar>硅&nbsp;谷&nbsp;直&nbsp;聘</NavBar>
@@ -100,3 +114,8 @@ export default class Register extends Component {
 		)
 	}
 }
+
+export default connect(
+	state => ({ user: state.user }),
+	{ register }
+)(Register)

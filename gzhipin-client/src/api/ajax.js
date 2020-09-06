@@ -9,8 +9,8 @@ export default function ajax(url, data = {}, type = 'GET') {
         if (strData) {
             url = url + '?' + strData.substring(0, strData.length - 1)
         }
-        axios.get(url)
+        return axios.get(url)
     } else {
-        axios.post(url, data)
+        return axios.post(url, data)
     }
 }

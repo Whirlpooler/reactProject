@@ -13,20 +13,21 @@ const initUser = {
     username: '', // 用户名
     type: '', // 类型
     msg: '', // 错误提示信息
+    redirectTo: '' //需要自动重定向的路由路径
 }
 
 function user(state = initUser, action) {
     switch (action.type) {
         case AUTH_SUCCESS:
             return {
-                ...state, ...action.data
+                ...action.data, redirectTo: '/'
             }
-            case ERROR_MSG:
-                return {
-                    ...state, msg: action.data
-                }
-                default:
-                    return state
+        case ERROR_MSG:
+            return {
+                ...state, msg: action.data, redirectTo: '/'
+            }
+        default:
+            return state
     }
 }
 
