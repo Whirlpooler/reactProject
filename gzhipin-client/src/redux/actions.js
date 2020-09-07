@@ -1,15 +1,23 @@
 import {
     reqRegister,
-    reqLogin
+    reqLogin,
+    reqUpdate
 } from '../api'
 import {
     AUTH_SUCCESS,
-    ERROR_MSG
+    ERROR_MSG,
+    RESET_USER,
+    UPDATE_USER
 } from './action-types'
 // 包含n个action creator 
 // 异步action
 export function register(user) {
-    const { username, password, password2, type } = user
+    const {
+        username,
+        password,
+        password2,
+        type
+    } = user
 
     if (!username) {
         return errorMsg('用户名不能为空！')
@@ -18,7 +26,13 @@ export function register(user) {
     }
 
     return async dispatch => {
-        const { data } = await reqRegister({ username, password, type })
+        const {
+            data
+        } = await reqRegister({
+            username,
+            password,
+            type
+        })
         if (data.code === 0) { // 成功
             dispatch(authSuccess(data.data))
         } else { //失败
@@ -28,7 +42,10 @@ export function register(user) {
 }
 
 export function login(user) {
-    const { username, password } = user
+    const {
+        username,
+        password
+    } = user
 
     if (!username) {
         return errorMsg('用户名不能为空！')
@@ -36,7 +53,10 @@ export function login(user) {
         return errorMsg('密码不能为空！')
     }
     return async dispatch => {
-        const response = await reqLogin({ username, password })
+        const response = await reqLogin({
+            username,
+            password
+        })
         const result = response.data
         if (result.code === 0) { // 成功
             dispatch(authSuccess(result.data))
@@ -45,6 +65,19 @@ export function login(user) {
         }
     }
 }
+
+export function updateUserAsync(user) {
+    return async dispatch => {
+        const response = await reqUpdate(user)
+        const result = response.data
+        if (result.code === 0) { // 更新成功
+            dispatch(updateUser(result.data))
+        } else { // 更新失败
+            dispatch(resetUser(result.msg))
+        }
+    }
+}
+
 // 同步action
 const errorMsg = (msg) => ({
     type: ERROR_MSG,
@@ -53,4 +86,12 @@ const errorMsg = (msg) => ({
 const authSuccess = (user) => ({
     type: AUTH_SUCCESS,
     data: user
+})
+const updateUser = (user) => ({
+    type: UPDATE_USER,
+    data: user
+})
+const resetUser = (msg) => ({
+    type: RESET_USER,
+    data: msg
 })

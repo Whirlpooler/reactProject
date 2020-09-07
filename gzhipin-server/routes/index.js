@@ -73,4 +73,52 @@ router.post('/login', (req, res) => {
         }
     })
 })
+
+// 更新用户信息
+router.post('/update', (req, res) => {
+    const userid = req.cookies.userId
+    const {
+        header,
+        info,
+        post,
+        salary,
+        company
+    } = req.body
+    if (!userid) {
+        res.send({
+            code: 1,
+            msg: '请先登录'
+        })
+    } else {
+        UserModel.findByIdAndUpdate({
+            _id: userid
+        }, {
+            header,
+            info,
+            post,
+            salary,
+            company
+        }, (error, oldUser) => {
+            if (!oldUser) {
+                res.clearCookie('userId')
+                res.send({
+                    code: 1,
+                    msg: '请先登录'
+                })
+            } else {
+                const data = Object.assign(oldUser, {
+                    header,
+                    info,
+                    post,
+                    salary,
+                    company
+                })
+                res.send({
+                    code: 0,
+                    data
+                })
+            }
+        })
+    }
+})
 module.exports = router;
