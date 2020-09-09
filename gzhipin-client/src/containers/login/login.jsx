@@ -7,7 +7,7 @@ import {
 	InputItem,
 	WhiteSpace,
 	Button,
-	Toast
+	Toast,
 } from 'antd-mobile'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
@@ -31,6 +31,7 @@ class Login extends Component {
 		this.props.history.replace('/register')
 	}
 	render() {
+		console.log(this.props)
 		const { msg, redirectTo } = this.props
 		if (msg) {
 			Toast.fail(msg, 3)
@@ -76,7 +77,4 @@ class Login extends Component {
 	}
 }
 
-export default connect(
-	state => state.user,
-	{ login }
-)(Login)
+export default connect((state) => state.user, { login })(Login)
