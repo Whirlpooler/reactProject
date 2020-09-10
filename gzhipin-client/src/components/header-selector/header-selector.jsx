@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { List, Grid } from 'antd-mobile'
 import PropTypes from 'prop-types'
+
 export default class HeaderSelector extends Component {
   static propTypes = {
     changeHeader: PropTypes.func.isRequired
   }
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.headerList = []
     this.state = {
@@ -14,7 +15,7 @@ export default class HeaderSelector extends Component {
     for (let index = 0; index < 20; index++) {
       this.headerList.push({
         text: `头像${index + 1}`,
-        icon: require(`./images/头像${index + 1}.png`)
+        icon: require(`../../asset/images/头像${index + 1}.png`)
       })
     }
   }
@@ -24,15 +25,15 @@ export default class HeaderSelector extends Component {
     })
     this.props.changeHeader(el.text)
   }
-  render () {
+  render() {
     const headerShow = () => {
       return !this.state.icon ? (
         '请选择头像'
       ) : (
-        <div>
-          <img src={this.state.icon} alt='' />
-        </div>
-      )
+          <div>
+            <img src={this.state.icon} alt='' />
+          </div>
+        )
     }
     return (
       <div>

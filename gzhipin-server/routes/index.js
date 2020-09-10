@@ -141,4 +141,12 @@ router.get('/user', (req, res) => {
         })
     }
 })
+
+// 获取用户列表
+router.get('/userlist', (req, res) => {
+    const { type } = req.query
+    UserModel.find({ type }, filter, (error, userList) => {
+        res.send({ code: 0, data: userList })
+    })
+})
 module.exports = router;

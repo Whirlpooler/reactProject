@@ -2,14 +2,16 @@ import {
     reqRegister,
     reqLogin,
     reqUpdate,
-    reqUser
+    reqUser,
+    reqUserList
 } from '../api'
 import {
     AUTH_SUCCESS,
     ERROR_MSG,
     RESET_USER,
     UPDATE_USER,
-    GET_USER
+    GET_USER,
+    USER_LIST
 } from './action-types'
 // 包含n个action creator 
 // 异步action
@@ -90,6 +92,17 @@ export function getUser() {
         }
     }
 }
+export function getUserList(type) {
+    return async dispatch => {
+        const response = await reqUserList(type)
+        const result = response.data
+        if (result.code === 0) {
+            dispatch(userList(result.data))
+        } else {
+            dispatch(errorMsg('列表获取失败'))
+        }
+    }
+}
 // 同步action
 const errorMsg = (msg) => ({
     type: ERROR_MSG,
@@ -103,11 +116,15 @@ const updateUser = (user) => ({
     type: UPDATE_USER,
     data: user
 })
-const resetUser = (msg) => ({
+export const resetUser = (msg) => ({
     type: RESET_USER,
     data: msg
 })
 const User = (user) => ({
     type: GET_USER,
     data: user
+})
+const userList = (userList) => ({
+    type: USER_LIST,
+    data: userList
 })

@@ -10,7 +10,8 @@ import {
     ERROR_MSG,
     UPDATE_USER,
     RESET_USER,
-    GET_USER
+    GET_USER,
+    USER_LIST
 } from './action-types'
 import {
     getRedirectTo
@@ -28,27 +29,37 @@ function user(state = initUser, action) {
             return {
                 ...action.data, redirectTo: getRedirectTo(action.data.type, action.header)
             }
-            case ERROR_MSG:
-                return {
-                    ...state, msg: action.data
-                }
-                case UPDATE_USER:
-                    return action.data
-                case RESET_USER:
-                    return {
-                        ...initUser, msg: action.data
-                    }
-                    case GET_USER:
-                        return {
-                            ...initUser, ...action.data
-                        }
-                        default:
-                            return state
+        case ERROR_MSG:
+            return {
+                ...state, msg: action.data
+            }
+        case UPDATE_USER:
+            return action.data
+        case RESET_USER:
+            return {
+                ...initUser, msg: action.data
+            }
+        case GET_USER:
+            return {
+                ...initUser, ...action.data
+            }
+        default:
+            return state
+    }
+}
+const initUserList = []
+function userList(state = initUserList, action) {
+    switch (action.type) {
+        case USER_LIST:
+            return action.data
+        default:
+            return state
     }
 }
 
 export default combineReducers({
-    user
+    user,
+    userList
 })
 
 // 向外暴露的状态结构： {xxx:0,yyy:0}
