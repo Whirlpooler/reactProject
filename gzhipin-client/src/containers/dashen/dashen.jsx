@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
-export default class DaShen extends Component {
+class Dashen extends Component {
 	render() {
 		return <div>dashen</div>
 	}
 }
+
+export default connect((state) => ({ user: state }), {})(Dashen)

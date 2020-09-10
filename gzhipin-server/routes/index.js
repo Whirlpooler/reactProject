@@ -121,4 +121,24 @@ router.post('/update', (req, res) => {
         })
     }
 })
+
+//获取用户信息
+router.get('/user', (req, res) => {
+    const userId = req.cookies.userId
+    if (userId) {
+        UserModel.findOne({
+            _id: userId
+        }, filter, (error, user) => {
+            res.send({
+                code: 0,
+                data: user
+            })
+        })
+    } else {
+        res.send({
+            code: 1,
+            msg: '请先登录'
+        })
+    }
+})
 module.exports = router;

@@ -9,7 +9,8 @@ import {
     AUTH_SUCCESS,
     ERROR_MSG,
     UPDATE_USER,
-    RESET_USER
+    RESET_USER,
+    GET_USER
 } from './action-types'
 import {
     getRedirectTo
@@ -37,8 +38,12 @@ function user(state = initUser, action) {
                     return {
                         ...initUser, msg: action.data
                     }
-                    default:
-                        return state
+                    case GET_USER:
+                        return {
+                            ...initUser, ...action.data
+                        }
+                        default:
+                            return state
     }
 }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavBar, InputItem, TextareaItem, Button } from 'antd-mobile'
+import { NavBar, InputItem, TextareaItem, Button, Toast } from 'antd-mobile'
 import HeaderSelector from '../../components/header-selector/header-selector'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -21,6 +21,10 @@ class DaShenInfo extends Component {
 	}
 	save = () => {
 		// console.log(this.state)
+		if (!this.state.header) {
+			Toast.fail('请选择头像')
+			return
+		}
 		this.props.updateUserAsync(this.state)
 	}
 	render() {

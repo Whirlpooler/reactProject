@@ -1,13 +1,15 @@
 import {
     reqRegister,
     reqLogin,
-    reqUpdate
+    reqUpdate,
+    reqUser
 } from '../api'
 import {
     AUTH_SUCCESS,
     ERROR_MSG,
     RESET_USER,
-    UPDATE_USER
+    UPDATE_USER,
+    GET_USER
 } from './action-types'
 // 包含n个action creator 
 // 异步action
@@ -77,7 +79,17 @@ export function updateUserAsync(user) {
         }
     }
 }
-
+export function getUser() {
+    return async dispatch => {
+        const response = await reqUser()
+        const result = response.data
+        if (result.code === 0) { // 获取成功
+            dispatch(User(result.data))
+        } else { // 获取失败
+            dispatch(errorMsg(result.msg))
+        }
+    }
+}
 // 同步action
 const errorMsg = (msg) => ({
     type: ERROR_MSG,
@@ -94,4 +106,8 @@ const updateUser = (user) => ({
 const resetUser = (msg) => ({
     type: RESET_USER,
     data: msg
+})
+const User = (user) => ({
+    type: GET_USER,
+    data: user
 })

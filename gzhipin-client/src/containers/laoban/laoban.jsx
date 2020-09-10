@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-
-export default class LaoBan extends Component {
+import { connect } from 'react-redux'
+class Laoban extends Component {
 	render() {
 		return <div>laoban</div>
 	}
 }
+
+export default connect((state) => ({ user: state.user }), {})(Laoban)

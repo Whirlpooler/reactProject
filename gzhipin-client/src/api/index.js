@@ -13,3 +13,5 @@ export const reqLogin = ({ //登录
 }, 'POST')
 
 export const reqUpdate = (user) => ajax('/update', user, 'POST') //修改
+
+export const reqUser = () => ajax('/user')
