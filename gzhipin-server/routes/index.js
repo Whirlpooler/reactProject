@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 const {
-    UserModel
+    UserModel,
+    ChatModel
 } = require('../db/models')
 const md5 = require('blueimp-md5')
 const filter = {
-    password: 0
+    password: 0,
+    __v: 0
 } // 查询时过滤出指定的属性
 // 注册接口
 router.post('/register', (req, res) => {
@@ -144,9 +146,67 @@ router.get('/user', (req, res) => {
 
 // 获取用户列表
 router.get('/userlist', (req, res) => {
-    const { type } = req.query
-    UserModel.find({ type }, filter, (error, userList) => {
-        res.send({ code: 0, data: userList })
+    const {
+        type
+    } = req.query
+    UserModel.find({
+        type
+    }, filter, (error, userList) => {
+        res.send({
+            code: 0,
+            data: userList
+        })
     })
+})
+// 获取当前用户的聊天消息列表
+router.get('/msglist', (req, res) => {
+    const userId = req.cookies.userId
+
+    ChatModel.find((error, data) => {
+        var users = {}
+        data.forEach(value => {
+            users[value._id] = {
+                username: value.username,
+                header: value.header
+            }
+        })
+        ChatModel.find({
+            '$or': [{
+                from: userId
+            }, {
+                to: userId
+            }]
+        }, (error, chatMsgs) => {
+            res.send({
+                code: 0,
+                data: {
+                    users,
+                    chatMsgs
+                }
+            })
+        })
+    })
+})
+// 修改指定消息为已读
+router.post('/readmsg', (req, res) => {
+    const {
+        from
+    } = req.body
+    const to = req.cookies.userId
+    ChatModel.update({
+        from,
+        to,
+        read: false
+    }, {
+        read: true
+    }, {
+        multi: true
+    }, (error, doc) => {
+        res.send({
+            code: 0,
+            data: doc.nModified
+        }) // 更新的数量    
+    })
+
 })
 module.exports = router;

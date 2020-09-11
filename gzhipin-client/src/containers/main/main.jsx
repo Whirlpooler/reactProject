@@ -14,6 +14,7 @@ import Laoban from '../laoban/laoban'
 import Dashen from '../dashen/dashen'
 import NotFound from '../../components/not-found/not-found'
 import FooterBar from '../../components/footer-bar/footer-bar'
+import '../../test/socketio_test'
 class Main extends Component {
 	navList = [
 		{
@@ -62,6 +63,7 @@ class Main extends Component {
 				let path = this.props.location.pathname
 				if (path === '/') {
 					path = getRedirectTo(user.type, user.header)
+					console.log('1111', path)
 					return <Redirect to={path}></Redirect>
 				}
 			}
@@ -77,12 +79,24 @@ class Main extends Component {
 				this.navList[0].hidden = true
 			}
 		}
-
+		let navList = this.navList.filter((value) => !value.hidden)
+		console.log('navList', navList)
 		return (
 			<React.Fragment>
-				{NavObj ? <NavBar>{NavObj.title}</NavBar> : null}
+				{NavObj ? (
+					<NavBar
+						style={{
+							position: 'fixed',
+							top: 0,
+							width: '100%',
+							zIndex: 10,
+						}}
+					>
+						{NavObj.title}
+					</NavBar>
+				) : null}
 				<Switch>
-					{this.navList.map((value) => (
+					{navList.map((value) => (
 						<Route
 							key={value.path}
 							path={value.path}
@@ -93,7 +107,7 @@ class Main extends Component {
 					<Route path="/laobaninfo" component={LanBanInfo}></Route>
 					<Route component={NotFound}></Route>
 				</Switch>
-				{NavObj ? <FooterBar navList={this.navList}></FooterBar> : null}
+				{NavObj ? <FooterBar navList={navList}></FooterBar> : null}
 			</React.Fragment>
 		)
 	}

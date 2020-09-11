@@ -6,10 +6,10 @@ const Item = TabBar.Item
 class FooterBar extends Component {
 	render() {
 		const path = this.props.location.pathname
-		let navList = this.props.navList.filter((value) => !value.hidden)
+
 		return (
 			<TabBar tabBarPosition="bottom">
-				{navList.map((value) => (
+				{this.props.navList.map((value) => (
 					<Item
 						key={value.path}
 						title={value.text}

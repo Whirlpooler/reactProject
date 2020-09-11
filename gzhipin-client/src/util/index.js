@@ -1,12 +1,12 @@
 export function getRedirectTo(type, header, action) {
     let path
     if (type === 'laoban') {
-        path = '/laoban'
-    } else {
         path = '/dashen'
+    } else {
+        path = '/laoban'
     }
     if (!header) {
-        path += 'info'
+        path = '/' + type + 'info'
     }
     return path
 }

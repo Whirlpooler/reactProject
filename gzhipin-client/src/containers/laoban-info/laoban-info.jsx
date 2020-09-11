@@ -30,7 +30,7 @@ class LaoBanInfo extends Component {
 	}
 	render() {
 		if (this.props.user.header) {
-			return <Redirect to="/laoban"></Redirect>
+			return <Redirect to="/dashen"></Redirect>
 		}
 		return (
 			<div>
