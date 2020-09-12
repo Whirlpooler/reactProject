@@ -162,7 +162,8 @@ router.get('/userlist', (req, res) => {
 router.get('/msglist', (req, res) => {
     const userId = req.cookies.userId
 
-    ChatModel.find((error, data) => {
+    UserModel.find((error, data) => {
+        console.log('data', data)
         var users = {}
         data.forEach(value => {
             users[value._id] = {

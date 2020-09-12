@@ -11,7 +11,9 @@ import {
     UPDATE_USER,
     RESET_USER,
     GET_USER,
-    USER_LIST
+    USER_LIST,
+    CAHT_MSG_LIST,
+    CAHT_MSG
 } from './action-types'
 import {
     getRedirectTo
@@ -57,9 +59,34 @@ function userList(state = initUserList, action) {
     }
 }
 
+const initMsg = {
+    users: {},
+    chatMsgs: [],
+    unReadCount: 0
+}
+function msgList(state = initMsg, action) {
+    switch (action.type) {
+        case CAHT_MSG_LIST:
+            return {
+                ...action.data,
+                unReadCount: action.data.chatMsgs.reduce((preTotal, msg) => preTotal + (!msg.read && msg.to === action.data.userId ? 1 : 0), 0)
+            }
+        case CAHT_MSG:
+            const { chatMsg, userId } = action.data
+            return {
+                unReadCount: state.unReadCount + (!chatMsg.read && chatMsg.to === userId ? 1 : 0),
+                users: state.users,
+                chatMsgs: [...state.chatMsgs, chatMsg]
+            }
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     user,
-    userList
+    userList,
+    msgList
 })
 
 // 向外暴露的状态结构： {xxx:0,yyy:0}

@@ -11,3 +11,7 @@ export const RESET_USER = 'RESET_USER'
 export const GET_USER = 'GET_USER'
 
 export const USER_LIST = 'USER_LIST'
+
+export const CAHT_MSG_LIST = 'CAHT_MSG_LIST'
+
+export const CAHT_MSG = 'CAHT_MSG'

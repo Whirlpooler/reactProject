@@ -6,11 +6,12 @@ const Item = TabBar.Item
 class FooterBar extends Component {
 	render() {
 		const path = this.props.location.pathname
-
+		const unReadCount = this.props.unReadCount
 		return (
 			<TabBar tabBarPosition="bottom">
 				{this.props.navList.map((value) => (
 					<Item
+						badge={value.path === '/message' ? unReadCount : null}
 						key={value.path}
 						title={value.text}
 						icon={{ uri: require(`./images/${value.icon}.png`) }}

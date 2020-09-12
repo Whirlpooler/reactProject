@@ -3,7 +3,9 @@ import {
     reqLogin,
     reqUpdate,
     reqUser,
-    reqUserList
+    reqUserList,
+    reqChatList,
+    reqSetRead
 } from '../api'
 import {
     AUTH_SUCCESS,
@@ -11,8 +13,35 @@ import {
     RESET_USER,
     UPDATE_USER,
     GET_USER,
-    USER_LIST
+    USER_LIST,
+    CAHT_MSG_LIST,
+    CAHT_MSG
 } from './action-types'
+import io from 'socket.io-client'
+function initOI(dispatch, userId) {
+    if (!io.socket) {
+        io.socket = io('ws://localhost:4000')
+        io.socket.on('receiveMsg', function (data) {
+            if (userId === data.from || userId === data.to) {
+                dispatch(chatMsg({ data, userId }))
+            }
+        })
+    }
+}
+export function sendMsg({ from, to, content }) {
+    return dispatch => {
+        io.socket.emit('sendMsg', { from, to, content })
+    }
+}
+
+async function getMsgList(dispatch, userId) {
+    initOI(dispatch, userId)
+    const response = await reqChatList()
+    const result = response.data
+    if (result.code === 0) {
+        dispatch(msgList({ ...result.data, userId }))
+    }
+}
 // 包含n个action creator 
 // 异步action
 export function register(user) {
@@ -38,6 +67,7 @@ export function register(user) {
             type
         })
         if (data.code === 0) { // 成功
+            getMsgList(dispatch, data.data._id)
             dispatch(authSuccess(data.data))
         } else { //失败
             dispatch(errorMsg(data.msg))
@@ -63,6 +93,7 @@ export function login(user) {
         })
         const result = response.data
         if (result.code === 0) { // 成功
+            getMsgList(dispatch, result.data._id)
             dispatch(authSuccess(result.data))
         } else { //失败
             dispatch(errorMsg(result.msg))
@@ -86,6 +117,7 @@ export function getUser() {
         const response = await reqUser()
         const result = response.data
         if (result.code === 0) { // 获取成功
+            getMsgList(dispatch, result.data._id)
             dispatch(User(result.data))
         } else { // 获取失败
             dispatch(errorMsg(result.msg))
@@ -103,6 +135,15 @@ export function getUserList(type) {
         }
     }
 }
+
+const msgList = ({ users, chatMsgs, userId }) => ({
+    type: CAHT_MSG_LIST,
+    data: { users, chatMsgs, userId }
+})
+const chatMsg = (oneMsg) => ({
+    type: CAHT_MSG,
+    data: oneMsg
+})
 // 同步action
 const errorMsg = (msg) => ({
     type: ERROR_MSG,

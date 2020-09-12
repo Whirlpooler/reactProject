@@ -12,9 +12,10 @@ import Message from '../message/message'
 import Personal from '../personal/personal'
 import Laoban from '../laoban/laoban'
 import Dashen from '../dashen/dashen'
+import Chat from '../chat/chat'
 import NotFound from '../../components/not-found/not-found'
 import FooterBar from '../../components/footer-bar/footer-bar'
-import '../../test/socketio_test'
+// import '../../test/socketio_test'
 class Main extends Component {
 	navList = [
 		{
@@ -63,7 +64,6 @@ class Main extends Component {
 				let path = this.props.location.pathname
 				if (path === '/') {
 					path = getRedirectTo(user.type, user.header)
-					console.log('1111', path)
 					return <Redirect to={path}></Redirect>
 				}
 			}
@@ -80,17 +80,11 @@ class Main extends Component {
 			}
 		}
 		let navList = this.navList.filter((value) => !value.hidden)
-		console.log('navList', navList)
 		return (
 			<React.Fragment>
 				{NavObj ? (
 					<NavBar
-						style={{
-							position: 'fixed',
-							top: 0,
-							width: '100%',
-							zIndex: 10,
-						}}
+						className="sticky-header"
 					>
 						{NavObj.title}
 					</NavBar>
@@ -105,12 +99,13 @@ class Main extends Component {
 					))}
 					<Route path="/dasheninfo" component={DaShenInfo}></Route>
 					<Route path="/laobaninfo" component={LanBanInfo}></Route>
+					<Route path="/chat/:userId" component={Chat}></Route>
 					<Route component={NotFound}></Route>
 				</Switch>
-				{NavObj ? <FooterBar navList={navList}></FooterBar> : null}
+				{NavObj ? <FooterBar navList={navList} unReadCount={this.props.unReadCount}></FooterBar> : null}
 			</React.Fragment>
 		)
 	}
 }
 
-export default connect((state) => ({ user: state.user }), { getUser })(Main)
+export default connect((state) => ({ user: state.user, unReadCount: state.msgList.unReadCount }), { getUser })(Main)
