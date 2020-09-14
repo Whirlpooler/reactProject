@@ -15,3 +15,5 @@ export const USER_LIST = 'USER_LIST'
 export const CAHT_MSG_LIST = 'CAHT_MSG_LIST'
 
 export const CAHT_MSG = 'CAHT_MSG'
+
+export const SET_READ = 'SET_READ'

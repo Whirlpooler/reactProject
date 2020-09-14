@@ -15,7 +15,8 @@ import {
     GET_USER,
     USER_LIST,
     CAHT_MSG_LIST,
-    CAHT_MSG
+    CAHT_MSG,
+    SET_READ
 } from './action-types'
 import io from 'socket.io-client'
 function initOI(dispatch, userId) {
@@ -23,7 +24,7 @@ function initOI(dispatch, userId) {
         io.socket = io('ws://localhost:4000')
         io.socket.on('receiveMsg', function (data) {
             if (userId === data.from || userId === data.to) {
-                dispatch(chatMsg({ data, userId }))
+                dispatch(chatMsg(data, userId ))
             }
         })
     }
@@ -40,6 +41,16 @@ async function getMsgList(dispatch, userId) {
     const result = response.data
     if (result.code === 0) {
         dispatch(msgList({ ...result.data, userId }))
+    }
+}
+
+export function readMsg(from,to){
+    return async dispatch => {
+        const response = await reqSetRead(from)
+        const result = response.data
+        if(result.code === 0){
+            dispatch(setRead({from,to,count:result.data}))
+        }
     }
 }
 // 包含n个action creator 
@@ -136,13 +147,19 @@ export function getUserList(type) {
     }
 }
 
+
 const msgList = ({ users, chatMsgs, userId }) => ({
     type: CAHT_MSG_LIST,
     data: { users, chatMsgs, userId }
 })
-const chatMsg = (oneMsg) => ({
+const chatMsg = (chatMsg,userId) => ({
     type: CAHT_MSG,
-    data: oneMsg
+    data: chatMsg,
+    userId
+})
+const setRead = (msg) => ({
+    type: SET_READ,
+    data: msg
 })
 // 同步action
 const errorMsg = (msg) => ({

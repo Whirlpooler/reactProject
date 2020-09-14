@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { List, Badge } from 'antd-mobile'
+import QueueAnim from 'rc-queue-anim'
 const Item = List.Item
 const Brief = Item.Brief
 
@@ -24,7 +25,7 @@ function getLastMsg(chatMsgs, userId) {
 			lastMsgObjs[chat_id] = msg
 		}
 
-	})
+    })
 	let lastMsgArray = Object.values(lastMsgObjs)
 	lastMsgArray.sort(function (m1, m2) {
 		return m2.create_time - m1.create_time
@@ -41,7 +42,8 @@ class Message extends Component {
 		console.log(33, lastMsgArray)
 		return (
 			<List style={{ marginTop: 50, marginBottom: 50 }}>
-				{
+                <QueueAnim type="scale">
+                {
 					lastMsgArray.map(msg => {
 						const targetUserId = msg.from === userId ? msg.to : msg.from
 						return <Item
@@ -56,7 +58,7 @@ class Message extends Component {
 						</Item>
 					})
 				}
-
+                </QueueAnim>
 			</List>
 		)
 	}

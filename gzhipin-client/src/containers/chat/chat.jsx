@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { NavBar, List, InputItem, Grid, Icon } from 'antd-mobile'
 import { connect } from 'react-redux'
-import { sendMsg } from '../../redux/actions'
+import QueueAnim from 'rc-queue-anim'
+import { sendMsg, readMsg } from '../../redux/actions'
 const Item = List.Item
 class Chat extends Component {
     constructor(props) {
@@ -32,6 +33,13 @@ class Chat extends Component {
     }
     componentDidUpdate() {
         window.scrollTo(0, document.body.scrollHeight)
+    }
+    componentWillUnmount(){
+        if(this.props.msgList.unReadCount>0){
+            const from = this.props.match.params.userId
+            const to = this.props.user._id
+            this.props.readMsg(from, to)
+        }
     }
     handleSend = () => {
         const from = this.props.user._id
@@ -71,12 +79,12 @@ class Chat extends Component {
         const thumb = targetIcon ? require(`../../asset/images/${targetIcon}.png`) : null
         const chatId = [meId, targetId].sort().join('-')
         const newChatMsgs = chatMsgs.filter(value => value.chat_id === chatId)
-        console.log(222, newChatMsgs)
         return (
             <div id="chat-page">
                 <NavBar icon={<Icon type='left' />} className="sticky-header" onLeftClick={() => this.props.history.goBack()}>{targetUsername}</NavBar>
 
                 <List style={{ marginTop: 50, marginBottom: this.state.gridHeight }}>
+                <QueueAnim   >
                     {
                         newChatMsgs.map((value, index) => {
                             if (value.from === meId) {
@@ -90,6 +98,7 @@ class Chat extends Component {
                             }
                         })
                     }
+                </QueueAnim>
                 </List>
                 <div className='am-tab-bar'>
                     <InputItem placeholder="请输入" value={this.state.content} onFocus={() => this.setState({ showEmoji: false, gridHeight: 50 })} onChange={val => this.setState({ content: val })} extra={<span><span onClick={this.toggleShow}>😀</span><span onClick={this.handleSend}>发送</span></span>}>
@@ -119,5 +128,5 @@ class Chat extends Component {
 }
 export default connect(
     state => ({ msgList: state.msgList, user: state.user }),
-    { sendMsg }
+    { sendMsg, readMsg }
 )(Chat)

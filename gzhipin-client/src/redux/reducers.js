@@ -13,7 +13,8 @@ import {
     GET_USER,
     USER_LIST,
     CAHT_MSG_LIST,
-    CAHT_MSG
+    CAHT_MSG,
+    SET_READ
 } from './action-types'
 import {
     getRedirectTo
@@ -31,25 +32,26 @@ function user(state = initUser, action) {
             return {
                 ...action.data, redirectTo: getRedirectTo(action.data.type, action.header)
             }
-        case ERROR_MSG:
-            return {
-                ...state, msg: action.data
-            }
-        case UPDATE_USER:
-            return action.data
-        case RESET_USER:
-            return {
-                ...initUser, msg: action.data
-            }
-        case GET_USER:
-            return {
-                ...initUser, ...action.data
-            }
-        default:
-            return state
+            case ERROR_MSG:
+                return {
+                    ...state, msg: action.data
+                }
+                case UPDATE_USER:
+                    return action.data
+                case RESET_USER:
+                    return {
+                        ...initUser, msg: action.data
+                    }
+                    case GET_USER:
+                        return {
+                            ...initUser, ...action.data
+                        }
+                        default:
+                            return state
     }
 }
 const initUserList = []
+
 function userList(state = initUserList, action) {
     switch (action.type) {
         case USER_LIST:
@@ -64,22 +66,37 @@ const initMsg = {
     chatMsgs: [],
     unReadCount: 0
 }
+
 function msgList(state = initMsg, action) {
     switch (action.type) {
         case CAHT_MSG_LIST:
             return {
                 ...action.data,
-                unReadCount: action.data.chatMsgs.reduce((preTotal, msg) => preTotal + (!msg.read && msg.to === action.data.userId ? 1 : 0), 0)
+                    unReadCount: action.data.chatMsgs.reduce((preTotal, msg) => preTotal + (!msg.read && msg.to === action.data.userId ? 1 : 0), 0)
             }
-        case CAHT_MSG:
-            const { chatMsg, userId } = action.data
-            return {
-                unReadCount: state.unReadCount + (!chatMsg.read && chatMsg.to === userId ? 1 : 0),
-                users: state.users,
-                chatMsgs: [...state.chatMsgs, chatMsg]
-            }
-        default:
-            return state
+            case CAHT_MSG:
+                const chatMsg = action.data
+                const userId = action.userId
+                return {
+                        unReadCount: state.unReadCount + (!chatMsg.read && chatMsg.to === userId ? 1 : 0),
+                        users: state.users,
+                        chatMsgs: [...state.chatMsgs, chatMsg]
+                }
+                case SET_READ:
+                    const { from, to} = action.data
+                    return {
+                        users: state.users,
+                        unReadCount: state.unReadCount - action.data.count,
+                        chatMsgs: state.chatMsgs.map(msg => {
+                            if(msg.from === from && msg.to === to && !msg.read){
+                                return {...msg,read:true}
+                            }else {
+                                return msg
+                            }
+                        })
+                    }
+                default:
+                    return state
     }
 }
 
